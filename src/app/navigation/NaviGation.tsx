@@ -1,8 +1,8 @@
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscChromeRestore } from "react-icons/vsc";
+import MenuBar from "./MenuBar";
 
 
 const NaviGation = () => {
@@ -30,7 +30,7 @@ const NaviGation = () => {
         <div className="flex justify-between  p-1 border-b border-border w-full">
 
             <div>
-                <ModeToggle />
+                <MenuBar />
             </div>
             <div>
                 <Button variant={"ghost"} onClick={() => appwindow.minimize()}><VscChromeMinimize /></Button>
