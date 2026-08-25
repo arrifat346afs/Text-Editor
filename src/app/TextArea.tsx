@@ -22,15 +22,13 @@ const TextArea = () => {
   }, [content]);
   return (
     <>
-      <div className="h-200">
-        <div
-          ref={editorRef}
-          dir="ltr"
-          style={{ direction: "ltr", unicodeBidi: "plaintext" }}
-          contentEditable
-          onInput={handleInput}
-        />
-      </div>
+      <div
+        ref={editorRef}
+        dir="ltr"
+        style={{ direction: "ltr", unicodeBidi: "plaintext" }}
+        contentEditable
+        onInput={handleInput}
+      />
 
       <span>{charCount}</span>
     </>
