@@ -3,6 +3,7 @@
 interface Tab {
   id: string;
   filename: string;
+  content: string,
   isDirty: boolean;
 }
 
@@ -33,6 +34,7 @@ const FileTab = ({ tabs, activeTabId, setTabs, setActiveTabId }: FileTabProps) =
     const newTab: Tab = {
       id: crypto.randomUUID(),
       filename: `Untitled-${tabs.length + 1}`,
+      content: "",
       isDirty: false,
     };
     setTabs((prev) => [...prev, newTab]);
