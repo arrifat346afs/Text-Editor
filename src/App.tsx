@@ -4,12 +4,12 @@ import TextArea from "./app/TextArea";
 
 function App() {
   return (
-    <main className="flex flex-col w-full h-full">
-      <NaviGation />
-      <div className="flex-1 min-h-0">
-        <TextArea />
-      </div>
-    </main>
+<main className="flex flex-col w-full h-full">
+  <NaviGation />
+  <div className="flex-1 min-h-0">
+    <TextArea />
+  </div>
+</main>
   );
 }
 
