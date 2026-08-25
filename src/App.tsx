@@ -9,9 +9,9 @@ function App() {
   return (
     <main className=" w-full h-full ">
       <NaviGation />
-      <div className=" h-screen">
+
         <TextArea />
-      </div>
+
     </main>
   );
 }
