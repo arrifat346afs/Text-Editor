@@ -21,7 +21,7 @@ const TextArea = () => {
     console.log(content);
   }, [content]);
   return (
-    <>
+    <div className="flex flex-col justify-between ">
       <div
         ref={editorRef}
         dir="ltr"
@@ -31,7 +31,7 @@ const TextArea = () => {
       />
 
       <span>{charCount}</span>
-    </>
+    </div>
   );
 };
 
