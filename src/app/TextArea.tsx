@@ -2,7 +2,18 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-const TextArea = () => {
+
+interface TextAreaProps {
+  content: string;
+  onChange: (newContent: string) => void;
+}
+
+
+
+
+
+const TextArea = ({ content, onChange }: TextAreaProps) => {
+  
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const [charCount, setCharCount] = useState(0);

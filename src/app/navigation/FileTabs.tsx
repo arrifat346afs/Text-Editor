@@ -1,4 +1,4 @@
-import{ useState } from "react";
+
 
 interface Tab {
   id: string;
@@ -6,15 +6,18 @@ interface Tab {
   isDirty: boolean;
 }
 
-const initialTabs: Tab[] = [
-  { id: "1", filename: "Untitled-1", isDirty: false },
-  { id: "2", filename: "notes.txt", isDirty: true },
-  { id: "3", filename: "app.ts", isDirty: false },
-];
+interface FileTabProps {
+  tabs: Tab[];
+  activeTabId: string;
+  setTabs: React.Dispatch<React.SetStateAction<Tab[]>>;
+  setActiveTabId: React.Dispatch<React.SetStateAction<string>>;
+}
 
-const FileTab = () => {
-  const [tabs, setTabs] = useState<Tab[]>(initialTabs);
-  const [activeTabId, setActiveTabId] = useState("1");
+
+
+
+const FileTab = ({ tabs, activeTabId, setTabs, setActiveTabId }: FileTabProps) => {
+
 
   const closeTab = (id: string) => {
     setTabs((prev) => {
