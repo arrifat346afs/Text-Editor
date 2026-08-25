@@ -21,16 +21,17 @@ const TextArea = () => {
     console.log(content);
   }, [content]);
   return (
-    <div className="flex h-full flex-col justify-between items-end">
+    <div className="flex h-full flex-col justify-between">
       <div
         ref={editorRef}
         dir="ltr"
         style={{ direction: "ltr", unicodeBidi: "plaintext" }}
         contentEditable
         onInput={handleInput}
+        className="w-full flex-1 outline-none"
       />
 
-      <span className="bg-amber-300">{charCount}</span>
+      <span className="">{charCount}</span>
     </div>
   );
 };
