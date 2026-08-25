@@ -1,5 +1,3 @@
-
-import { Table } from "lucide-react";
 import "./App.css";
 import FileTab from "./app/navigation/FileTabs";
 import NaviGation from "./app/navigation/NaviGation";
@@ -39,7 +37,7 @@ function App() {
       <NaviGation />
       <FileTab tabs={tabs} activeTabId={activeTabId} setTabs={setTabs} setActiveTabId={setActiveTabId} />
       <div className="flex-1 min-h-0">
-        <TextArea />
+        <TextArea content={activeTab?.content ?? ""} onChange={updateActiveContent}/>
       </div>
     </main>
   );
