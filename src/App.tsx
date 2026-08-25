@@ -1,3 +1,4 @@
+
 import { Table } from "lucide-react";
 import "./App.css";
 import FileTab from "./app/navigation/FileTabs";
@@ -6,7 +7,7 @@ import TextArea from "./app/TextArea";
 import { useState } from "react";
 
 
-interface tab {
+interface Tab {
   id: string,
   filename: string,
   content: string,
@@ -23,13 +24,20 @@ function App() {
   ]);
  const [activeTabId, setActiveTabId] = useState("1");
  const activetab = tabs.find((t)=> t.id===activeTabId)
+  const updateActiveContent = (newContent: string) => {
+    setTabs((prev) =>
+      prev.map((t) =>
+        t.id === activeTabId ? { ...t, content: newContent, isDirty: true } : t
+      )
+    );
+  };
 
 
 
   return (
     <main className="flex flex-col w-full h-full">
       <NaviGation />
-      <FileTab />
+      <FileTab tabs={tabs} activeTabId={activeTabId} setTabs={setTabs} setActiveTabId={setActiveTabId} />
       <div className="flex-1 min-h-0">
         <TextArea />
       </div>
