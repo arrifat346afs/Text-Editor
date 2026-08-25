@@ -64,7 +64,6 @@ const TextArea = () => {
         ref={editorContainerRef}
         className="min-h-0 flex-1 w-full overflow-auto outline-none"
       />
-
       <span className="shrink-0 p-1 pl-2 bg-accent/35">{charCount}</span>
     </div>
   );
