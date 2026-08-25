@@ -21,7 +21,7 @@ const TextArea = () => {
     console.log(content);
   }, [content]);
   return (
-    <div className="flex h-full flex-col flex-wrap justify-between items-end">
+    <div className="flex h-full flex-col justify-between items-end">
       <div
         ref={editorRef}
         dir="ltr"
@@ -30,7 +30,7 @@ const TextArea = () => {
         onInput={handleInput}
       />
 
-      <span>{charCount}</span>
+      <span className="bg-amber-300">{charCount}</span>
     </div>
   );
 };
