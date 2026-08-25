@@ -22,7 +22,7 @@ const TextArea = () => {
   }, [content]);
   return (
     <>
-   
+      <div className="h-200">
         <div
           ref={editorRef}
           dir="ltr"
@@ -30,6 +30,7 @@ const TextArea = () => {
           contentEditable
           onInput={handleInput}
         />
+      </div>
 
       <span>{charCount}</span>
     </>
