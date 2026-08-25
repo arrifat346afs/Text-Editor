@@ -1,7 +1,7 @@
 import { EditorState } from "@codemirror/state";
-import { lineNumbers } from "@codemirror/view";
+import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
-
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 const TextArea = () => {
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -14,6 +14,13 @@ const TextArea = () => {
       extensions: [
         lineNumbers(),
         history(),
+        keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.lineWrapping,
+        EditorView.updateListener.of((update) =>{
+          if (update.docChanged) {
+            setCharCount(update.state.doc.length)
+          }
+        })
       ]
     })
   })
