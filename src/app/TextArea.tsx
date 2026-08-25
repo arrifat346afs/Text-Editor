@@ -21,7 +21,7 @@ const TextArea = () => {
     console.log(content);
   }, [content]);
   return (
-    <div className="flex h-screen flex-col justify-between overflow-hidden">
+    <div className="flex h-full flex-col justify-between overflow-hidden">
       <div
         ref={editorRef}
         dir="ltr"
