@@ -21,7 +21,7 @@ const TextArea = () => {
     console.log(content);
   }, [content]);
   return (
-    <div className="flex flex-col justify-between ">
+    <div className="flex flex-col flex-wrap justify-between items-end">
       <div
         ref={editorRef}
         dir="ltr"
