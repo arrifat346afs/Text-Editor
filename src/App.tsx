@@ -9,7 +9,7 @@ function App() {
   return (
     <main className=" w-full h-full ">
       <NaviGation />
-      <div className="border-2 h-">
+      <div className="border-5 h-screen">
         <TextArea />
       </div>
     </main>

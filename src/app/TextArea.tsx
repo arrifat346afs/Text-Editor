@@ -22,7 +22,7 @@ const TextArea = () => {
   }, [content]);
   return (
     <>
-      <div className="">
+      <div className="h">
         <div
           ref={editorRef}
           dir="ltr"
