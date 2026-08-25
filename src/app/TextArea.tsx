@@ -1,6 +1,6 @@
 import { EditorState } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef} from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 
 interface TextAreaProps {
@@ -13,15 +13,14 @@ interface TextAreaProps {
 
 
 const TextArea = ({ content, onChange }: TextAreaProps) => {
-  
+
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
-  const [charCount, setCharCount] = useState(0);
 
   useEffect(() => {
     if (!editorContainerRef.current) return;
     const state = EditorState.create({
-      doc: "",
+      doc: content,
       extensions: [
         lineNumbers(),
         history(),
@@ -29,7 +28,7 @@ const TextArea = ({ content, onChange }: TextAreaProps) => {
         EditorView.lineWrapping,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
-            setCharCount(update.state.doc.length);
+            onChange(update.state.doc.toString());
           }
         }),
         EditorView.theme({
@@ -69,13 +68,28 @@ const TextArea = ({ content, onChange }: TextAreaProps) => {
     return () => view.destroy(); // cleanup on unmount
   }, []);
 
+    // displayed content to match the new `content` prop
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+
+    const currentDoc = view.state.doc.toString();
+    if (currentDoc !== content) {
+      view.dispatch({
+        changes: { from: 0, to: currentDoc.length, insert: content },
+      });
+    }
+  }, [content]);
+
+
+
   return (
     <div className="flex h-full flex-col justify-between overflow-hidden">
       <div
         ref={editorContainerRef}
         className="min-h-0 flex-1 w-full overflow-auto outline-none"
       />
-      <span className="shrink-0 p-1 pl-2 bg-accent/35">{charCount}</span>
+      <span className="shrink-0 p-1 pl-2 bg-accent/35">{content.length}</span>
     </div>
   );
 };

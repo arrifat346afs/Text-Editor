@@ -35,7 +35,12 @@ function App() {
   return (
     <main className="flex flex-col w-full h-full">
       <NaviGation />
-      <FileTab tabs={tabs} activeTabId={activeTabId} setTabs={setTabs} setActiveTabId={setActiveTabId} />
+      <FileTab
+        tabs={tabs}
+        activeTabId={activeTabId}
+        setTabs={setTabs as any}
+        setActiveTabId={setActiveTabId}
+      />
       <div className="flex-1 min-h-0">
         <TextArea content={activeTab?.content ?? ""} onChange={updateActiveContent}/>
       </div>
