@@ -1,32 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const TextArea = () => {
-  const [content, setContent] = React.useState("")
-  const editorRef = React.useRef<HTMLDivElement>(null)
+  const [charCount, setCharCount] = useState(0);
+  const [content, setContent] = useState("");
+  const editorRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editorRef.current) {
-      editorRef.current.textContent = content
+      editorRef.current.textContent = content;
     }
-  }, [])
+  }, []);
 
   const handleInput = (event: React.SyntheticEvent<HTMLDivElement>) => {
     const text = event.currentTarget.textContent ?? "";
-    setContent(text)
-  }
+    setCharCount(text.length);
+    setContent(text);
+  };
 
   useEffect(() => {
-    console.log(content)
-  }, [content])
+    console.log(content);
+  }, [content]);
   return (
-    <div
-      ref={editorRef}
-      dir="ltr"
-      style={{ direction: "ltr", unicodeBidi: "plaintext" }}
-      contentEditable
-      onInput={handleInput}
-    />
-  )
-}
+    <>
+      <div
+        ref={editorRef}
+        dir="ltr"
+        style={{ direction: "ltr", unicodeBidi: "plaintext" }}
+        contentEditable
+        onInput={handleInput}
+      />
+      <span>{charCount}</span>
+    </>
+  );
+};
 
-export default TextArea
+export default TextArea;
