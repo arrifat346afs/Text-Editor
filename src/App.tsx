@@ -21,7 +21,7 @@ function App() {
     { id: "1", filename: "Untitled-1", content: "", isDirty: false },
   ]);
  const [activeTabId, setActiveTabId] = useState("1");
- const activetab = tabs.find((t)=> t.id===activeTabId)
+ const activeTab = tabs.find((t)=> t.id===activeTabId)
   const updateActiveContent = (newContent: string) => {
     setTabs((prev) =>
       prev.map((t) =>
