@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { EditorState } from "@codemirror/state";
+import { lineNumbers } from "@codemirror/view";
+import { useEffect, useRef, useState } from "react";
 
 const TextArea = () => {
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<EditorView | null>(null);
   const [charCount, setCharCount] = useState(0);
-  const [content, setContent] = useState("");
-  const editorRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.textContent = content;
-    }
-  }, []);
+  useEffect(()=>{
+    if(!editorContainerRef.current) return;
+    const state = EditorState.create({
+      doc: "",
+      extensions: [
+        lineNumbers(),
+        history(),
+      ]
+    })
+  })
 
-  const handleInput = (event: React.SyntheticEvent<HTMLDivElement>) => {
-    const text = event.currentTarget.textContent ?? "";
-    setCharCount(text.length);
-    setContent(text);
-  };
 
-  useEffect(() => {
-    console.log(content);
-  }, [content]);
   return (
     <div className="flex h-full flex-col justify-between overflow-hidden">
       <div
-        ref={editorRef}
+        ref={editorContainerRef}
         dir="ltr"
         style={{ direction: "ltr", unicodeBidi: "plaintext" }}
         contentEditable
