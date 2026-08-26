@@ -68,18 +68,18 @@ const TextArea = ({ content, onChange }: TextAreaProps) => {
     return () => view.destroy(); // cleanup on unmount
   }, []);
 
-    // displayed content to match the new `content` prop
-  useEffect(() => {
-    const view = viewRef.current;
-    if (!view) return;
+  //   // displayed content to match the new `content` prop
+  // useEffect(() => {
+  //   const view = viewRef.current;
+  //   if (!view) return;
 
-    const currentDoc = view.state.doc.toString();
-    if (currentDoc !== content) {
-      view.dispatch({
-        changes: { from: 0, to: currentDoc.length, insert: content },
-      });
-    }
-  }, [content]);
+  //   const currentDoc = view.state.doc.toString();
+  //   if (currentDoc !== content) {
+  //     view.dispatch({
+  //       changes: { from: 0, to: currentDoc.length, insert: content },
+  //     });
+  //   }
+  // }, [content]);
 
 
 
