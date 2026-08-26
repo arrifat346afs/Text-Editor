@@ -43,7 +43,7 @@ const FileTab = ({ tabs, activeTabId, setTabs, setActiveTabId }: FileTabProps) =
           className={`group flex items-center gap-2 px-3 py-1.5 border-r border-neutral-800 cursor-pointer text-sm select-none ${
             tab.id === activeTabId
               ? "bg-neutral-800 text-white"
-              : "text-neutral-400 hover:bg-neutral-850"
+              : "text-neutral-400 hover:bg-accent"
           }`}
         >
           <span>{tab.filename}</span>
