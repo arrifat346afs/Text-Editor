@@ -1,19 +1,16 @@
-// src/context/TabsContext.tsx
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import type { Tab } from "@/types";
 import { openFile } from "../utils/fileOperations";
-
-
 
 interface TabsContextValue {
     tabs: Tab[];
     activeTabId: string;
     activeTab: Tab | undefined;
     setActiveTabId: (id: string) => void;
-    setTabs: React.Dispatch<React.SetStateAction<Tab[]>>;
     updateActiveContent: (newContent: string) => void;
-    handleNewFile: () => void;
-    handleOpenFile: () => Promise<void>;
+    addTab: () => void;
+    closeTab: (id: string) => void;
+    openFileTab: () => Promise<void>;
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null);
@@ -31,13 +28,28 @@ export const TabsProvider = ({ children }: { children: ReactNode }) => {
         );
     };
 
-    const handleNewFile = () => {
-        const newTab: Tab = { id: crypto.randomUUID(), filename: `Untitled-${tabs.length + 1}`, content: "", isDirty: false };
+    const addTab = () => {
+        const newTab: Tab = {
+            id: crypto.randomUUID(),
+            filename: `Untitled-${tabs.length + 1}`,
+            content: "",
+            isDirty: false,
+        };
         setTabs((prev) => [...prev, newTab]);
         setActiveTabId(newTab.id);
     };
 
-    const handleOpenFile = async () => {
+    const closeTab = (id: string) => {
+        setTabs((prev) => {
+            const filtered = prev.filter((t) => t.id !== id);
+            setActiveTabId((current) =>
+                current === id && filtered.length > 0 ? filtered[0].id : current
+            );
+            return filtered;
+        });
+    };
+
+    const openFileTab = async () => {
         const result = await openFile();
         if (!result) return;
         const newTab: Tab = {
@@ -51,13 +63,21 @@ export const TabsProvider = ({ children }: { children: ReactNode }) => {
         setActiveTabId(newTab.id);
     };
 
-    return (
-        <TabsContext.Provider
-            value={{ tabs, activeTabId, activeTab, setActiveTabId, setTabs, updateActiveContent, handleNewFile, handleOpenFile }}
-        >
-            {children}
-        </TabsContext.Provider>
+    const value = useMemo(
+        () => ({
+            tabs,
+            activeTabId,
+            activeTab,
+            setActiveTabId,
+            updateActiveContent,
+            addTab,
+            closeTab,
+            openFileTab,
+        }),
+        [tabs, activeTabId, activeTab]
     );
+
+    return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;
 };
 
 export const useTabs = () => {

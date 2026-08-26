@@ -3,4 +3,5 @@ export interface Tab {
   filename: string;
   content: string;
   isDirty: boolean;
+  filePath?: string;
 }

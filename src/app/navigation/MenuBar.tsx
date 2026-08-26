@@ -16,18 +16,21 @@ import {
     SettingsIcon,
     TrashIcon,
 } from "lucide-react";
+import { useTabs } from "../context/TabsContext";
 
 const MenuBar = () => {
+    const { addTab, openFileTab } = useTabs();
+
     return (
         <Menubar className="w-72 border-0">
             <MenubarMenu>
                 <MenubarTrigger>File</MenubarTrigger>
                 <MenubarContent>
-                    <MenubarItem>
+                    <MenubarItem onClick={addTab}>
                         <FileIcon />
                         New File <MenubarShortcut>⌘N</MenubarShortcut>
                     </MenubarItem>
-                    <MenubarItem>
+                    <MenubarItem onClick={() => openFileTab()}>
                         <FolderIcon />
                         Open Folder
                     </MenubarItem>
