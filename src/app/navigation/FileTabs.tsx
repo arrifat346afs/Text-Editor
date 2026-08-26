@@ -42,8 +42,8 @@ const FileTab = ({ tabs, activeTabId, setTabs, setActiveTabId }: FileTabProps) =
           onClick={() => setActiveTabId(tab.id)}
           className={`group flex items-center gap-2 px-3 py-1.5 border-r border-neutral-800 cursor-pointer text-sm select-none ${
             tab.id === activeTabId
-              ? "bg-neutral-800 text-white"
-              : "text-neutral-400 hover:bg-accent"
+              ? "bg-muted text-white"
+              : "text-neutral-400 hover:bg-accent/40 hover:text-white transition-colors"
           }`}
         >
           <span>{tab.filename}</span>
