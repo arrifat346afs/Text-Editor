@@ -8,14 +8,7 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import {
-    FileIcon,
-    FolderIcon,
-    HelpCircleIcon,
-    SaveIcon,
-    SettingsIcon,
-    TrashIcon,
-} from "lucide-react";
+
 import { useTabs } from "../context/TabsContext";
 
 const MenuBar = () => {
@@ -27,16 +20,11 @@ const MenuBar = () => {
                 <MenubarTrigger>File</MenubarTrigger>
                 <MenubarContent>
                     <MenubarItem onClick={addTab}>
-                        <FileIcon />
                         New File <MenubarShortcut>⌘N</MenubarShortcut>
                     </MenubarItem>
-                    <MenubarItem onClick={() => openFileTab()}>
-                        <FolderIcon />
-                        Open Folder
-                    </MenubarItem>
+                    <MenubarItem onClick={() => openFileTab()}>Open File</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem>
-                        <SaveIcon />
                         Save <MenubarShortcut>⌘S</MenubarShortcut>
                     </MenubarItem>
                 </MenubarContent>
@@ -45,19 +33,10 @@ const MenuBar = () => {
                 <MenubarTrigger>More</MenubarTrigger>
                 <MenubarContent>
                     <MenubarGroup>
-                        <MenubarItem>
-                            <SettingsIcon />
-                            Settings
-                        </MenubarItem>
-                        <MenubarItem>
-                            <HelpCircleIcon />
-                            Help
-                        </MenubarItem>
+                        <MenubarItem>Settings</MenubarItem>
+                        <MenubarItem>Help</MenubarItem>
                         <MenubarSeparator />
-                        <MenubarItem variant="destructive">
-                            <TrashIcon />
-                            Delete
-                        </MenubarItem>
+                        <MenubarItem variant="destructive">Delete</MenubarItem>
                     </MenubarGroup>
                 </MenubarContent>
             </MenubarMenu>
