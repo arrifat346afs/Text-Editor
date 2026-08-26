@@ -8,6 +8,8 @@
     "opener:default",
     "core:window:default",
     "core:window:allow-start-dragging",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
     "core:window:allow-close",
     "core:window:allow-maximize",
     "core:window:allow-minimize",
