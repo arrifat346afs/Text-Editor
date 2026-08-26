@@ -4,6 +4,7 @@ import type { Tab } from "@/types";
 import { openFile } from "../utils/fileOperations";
 
 
+
 interface TabsContextValue {
     tabs: Tab[];
     activeTabId: string;
