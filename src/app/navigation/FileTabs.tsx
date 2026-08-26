@@ -1,11 +1,4 @@
-
-
-interface Tab {
-  id: string;
-  filename: string;
-  content: string,
-  isDirty: boolean;
-}
+import type { Tab } from "@/types";
 
 interface FileTabProps {
   tabs: Tab[];
