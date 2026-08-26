@@ -30,6 +30,7 @@ function App() {
       />
       <div className="flex-1 min-h-0">
         <TextArea
+          key={activeTabId}
           content={activeTab?.content ?? ""}
           onChange={updateActiveContent}
         />
