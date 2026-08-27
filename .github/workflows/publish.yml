@@ -1,0 +1,172 @@
+name: 'publish'
+
+on:
+  workflow_dispatch:
+
+env:
+  ARCH: x86_64
+  DEPENDENCIES_ARCH: "'libappindicator-gtk3' 'webkit2gtk-4.1' 'gtk3' 'xdotool'"
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            args: '--target aarch64-apple-darwin'
+          - platform: 'ubuntu-22.04'
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf nasm libxdo-dev ffmpeg
+
+      - name: setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: get package info
+        id: get-package
+        shell: bash
+        run: |
+          VERSION=$(bun -p "require('./package.json').version" 2>/dev/null || echo "undefined")
+          NAME=$(bun -p "require('./package.json').name" 2>/dev/null || echo "undefined")
+          DESCRIPTION=$(bun -p "require('./package.json').description" 2>/dev/null || echo "undefined")
+          LICENSE=$(bun -p "require('./package.json').license" 2>/dev/null || echo "undefined")
+
+          if [ "$VERSION" == "undefined" ]; then
+            VERSION=$(grep -oP '"version":\s*"\K[^"]+' src-tauri/tauri.conf.json || echo "0.0.0")
+          fi
+          if [ "$NAME" == "undefined" ]; then
+            NAME="text-editor"
+          fi
+          if [ "$DESCRIPTION" == "undefined" ]; then
+            DESCRIPTION="A Tauri App"
+          fi
+          if [ "$LICENSE" == "undefined" ]; then
+            LICENSE="MIT"
+          fi
+
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
+          echo "license=$LICENSE" >> $GITHUB_OUTPUT
+          echo "Package: $NAME v$VERSION ($DESCRIPTION, $LICENSE)"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: install frontend dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Get commit messages since last tag
+        id: changelog
+        shell: bash
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LATEST_TAG" ]; then
+            COMMITS=$(git log --oneline --pretty=format:"%an|%s (%h)" | grep -v "^github-actions\[bot\]|" | sed 's/^[^|]*|/- /')
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline --pretty=format:"%an|%s (%h)" | grep -v "^github-actions\[bot\]|" | sed 's/^[^|]*|/- /')
+          fi
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- No new changes"
+          fi
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "changelog<<$EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NO_STRIP: ${{ matrix.platform == 'ubuntu-22.04' && '1' || '' }}
+          LINUXDEPLOY_EXCLUDE_LIBS: ${{ matrix.platform == 'ubuntu-22.04' && 'libEGL.so,libGL.so,libgbm.so,libGLESv2.so' || '' }}
+        with:
+          tagName: app-v__VERSION__
+          releaseName: 'text-editor v__VERSION__'
+          releaseBody: |
+            ## What's Changed
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ---
+            See the assets below to download this version and install.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
+
+      - name: copy deb package && create PKGBUILD file (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        env:
+          NAME_BIN: ${{ steps.get-package.outputs.name }}-bin
+          DEB_PKG_PATH: ./src-tauri/target/release/bundle/deb/
+          DEB_PKG_RENAMED: ${{ steps.get-package.outputs.name }}-${{ steps.get-package.outputs.version }}-${{ env.ARCH }}.deb
+          TAG_NAME: app-v${{ steps.get-package.outputs.version }}
+        run: |
+          mkdir -p ${{ env.NAME_BIN }}
+
+          DEB_FILE=$(find ${{ env.DEB_PKG_PATH }} -name "*.deb" | head -n 1)
+          if [ -z "$DEB_FILE" ]; then echo "Error: .deb file not found in ${{ env.DEB_PKG_PATH }}"; ls -R ./src-tauri/target/release/bundle/ || true; exit 1; fi
+
+          cp -fr "$DEB_FILE" ${{ env.NAME_BIN }}/${{ env.DEB_PKG_RENAMED }}
+
+          cat <<EOF > ./${{ env.NAME_BIN }}/PKGBUILD
+          pkgname=${{ env.NAME_BIN }}
+          pkgver=${{ steps.get-package.outputs.version }}
+          md5sums=('$(md5sum ${{ env.NAME_BIN }}/${{ env.DEB_PKG_RENAMED }}  | awk '{print $1}')')
+          pkgrel=1
+          depends=(${{ env.DEPENDENCIES_ARCH }})
+          pkgdesc='${{ steps.get-package.outputs.description }}'
+          arch=('${{ env.ARCH }}')
+          url="https://github.com/${{ github.repository }}"
+          license=('${{ steps.get-package.outputs.license }}')
+          source=("\$url/releases/download/${{ env.TAG_NAME }}/${{ env.DEB_PKG_RENAMED }}")
+
+          build() {
+              rm -f control.tar.gz
+              tar xvf data.tar.gz
+          }
+
+          package() {
+              cp -fr usr/ \${pkgdir}
+          }
+          EOF
+          cat ${{ env.NAME_BIN }}/PKGBUILD
+
+      - name: create arch package (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        uses: 2m/arch-pkgbuild-builder@v1.17
+        with:
+          debug: true
+          target: pkgbuild
+          pkgname: ${{ steps.get-package.outputs.name }}-bin/
+
+      - name: upload arch release (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: app-v${{ steps.get-package.outputs.version }}
+          draft: false
+          files: |
+            ${{ steps.get-package.outputs.name }}-bin/${{ steps.get-package.outputs.name }}-bin-${{ steps.get-package.outputs.version }}-1-${{ env.ARCH }}.pkg.tar.zst
