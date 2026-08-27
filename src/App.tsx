@@ -2,10 +2,10 @@ import "./App.css";
 import FileTab from "./app/navigation/FileTabs";
 import NaviGation from "./app/navigation/NaviGation";
 import TextArea from "./app/TextArea";
-import { useTabs } from "./app/context/TabsContext";
+import { useAppContext } from "./app/context/useAppContext";
 
 function App() {
-  const { activeTabId } = useTabs();
+  const { activeTabId } = useAppContext();
 
   return (
     <main className="flex flex-col w-full h-full">

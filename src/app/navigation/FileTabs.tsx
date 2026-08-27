@@ -1,7 +1,7 @@
-import { useTabs } from "../context/TabsContext";
+import { useAppContext } from "../context/useAppContext";
 
 const FileTab = () => {
-  const { tabs, activeTabId, setActiveTabId, closeTab, addTab } = useTabs();
+  const { tabs, activeTabId, setActiveTabId, closeTab, addTab } = useAppContext();
 
   return (
     <div className="flex shrink-0 items-center overflow-x-auto  border-b border-neutral-800">

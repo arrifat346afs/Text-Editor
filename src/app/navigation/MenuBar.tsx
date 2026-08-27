@@ -9,10 +9,11 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar";
 
-import { useTabs } from "../context/TabsContext";
+// import { useTabs } from "../context/TabsContext";
+import { useAppContext } from "../context/useAppContext";
 
 const MenuBar = () => {
-    const { addTab, openFileTab } = useTabs();
+    const { addTab, openFileTab } = useAppContext();
 
     return (
         <Menubar className="w-72 border-0">

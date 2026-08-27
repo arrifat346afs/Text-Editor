@@ -2,11 +2,11 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-import { useTabs } from "./context/TabsContext";
-
+import { useAppContext } from "./context/useAppContext";
 const TextArea = () => {
-  const { activeTab, updateActiveContent } = useTabs();
-  const content = activeTab?.content ?? "";
+  const { activeTabId, updateActiveContent, tabs } = useAppContext();
+  
+  const content = activeTabId ? (tabs.find((t) => t.id === activeTabId)?.content ?? "") : "";
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
