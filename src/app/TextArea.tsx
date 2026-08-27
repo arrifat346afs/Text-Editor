@@ -2,9 +2,19 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-import { useAppContext } from "./context/useAppContext";
+import { updateActiveContent, useAppContext } from "./context/useAppContext";
+import { useShallow } from "zustand/shallow";
+
+
+
+
 const TextArea = () => {
-  const { activeTabId, updateActiveContent, tabs } = useAppContext();
+  const { activeTabId, tabs } = useAppContext(
+    useShallow((state) => ({
+      activeTabId: state.activeTabId,
+      tabs: state.tabs,
+    }))
+  );
   
   const content = activeTabId ? (tabs.find((t) => t.id === activeTabId)?.content ?? "") : "";
 

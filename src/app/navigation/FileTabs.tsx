@@ -1,7 +1,13 @@
-import { useAppContext } from "../context/useAppContext";
+import { useShallow } from "zustand/shallow";
+import { addTab, closeTab, setActiveTabId, useAppContext } from "../context/useAppContext";
 
 const FileTab = () => {
-  const { tabs, activeTabId, setActiveTabId, closeTab, addTab } = useAppContext();
+  const { tabs, activeTabId} = useAppContext(
+    useShallow(state=>({
+      tabs: state.tabs,
+      activeTabId: state.activeTabId,
+    }))
+  );
 
   return (
     <div className="flex shrink-0 items-center overflow-x-auto  border-b border-neutral-800">

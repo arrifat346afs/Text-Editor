@@ -8,12 +8,11 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar";
+import { addTab, openFileTab } from "../context/useAppContext";
 
 // import { useTabs } from "../context/TabsContext";
-import { useAppContext } from "../context/useAppContext";
 
 const MenuBar = () => {
-    const { addTab, openFileTab } = useAppContext();
 
     return (
         <Menubar className="w-72 border-0">
