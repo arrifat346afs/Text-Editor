@@ -1,6 +1,6 @@
 import { Tab } from "@/types";
 import { create } from "zustand/react";
-import { openFile } from "../utils/fileOperations";
+import { openFile, saveFile, saveFileAs } from "../utils/fileOperations";
 
 
 
@@ -14,9 +14,12 @@ export const useAppContext = create<TabsContextValue>(() => ({
     activeTabId: "1",
 }));
 
+function getActiveTab(): Tab | undefined {
+    const { tabs, activeTabId } = useAppContext.getState();
+    return tabs.find((t) => t.id === activeTabId);
+}
 
-
-export function setActiveTabId(id: string): void {
+export function setActiveTabId(id: string) {
     useAppContext.setState({ activeTabId: id })
 }
 
@@ -44,7 +47,7 @@ export function addTab() {
     });
 }
 
-export function closeTab(id: string): void {
+export function closeTab(id: string) {
     useAppContext.setState((state) => {
         const filtered = state.tabs.filter((t) => t.id !== id);
         const newActiveTabId =
@@ -71,4 +74,46 @@ export async function openFileTab() {
         tabs: [...state.tabs, newTab],
         activeTabId: newTab.id,
     }));
+}
+
+
+
+export async function saveActiveTab() {
+    const tab = getActiveTab()
+    if (!tab) return
+
+    if (!tab.filePath) {
+        await saveActiveTabAs()
+        return
+    }
+
+    const success = await saveFile(tab.filePath, tab.content)
+    if (success) {
+        useAppContext.setState((state) => ({
+            tabs: state.tabs.map((t) =>
+                t.id == tab.id ? { ...t, isDirty: false } : t
+            )
+        }))
+    }
+}
+
+
+export async function saveActiveTabAs() {
+    const tab = getActiveTab()
+    if (!tab) return
+
+    const result = await saveFileAs(tab.content)
+    if (!result) return;
+
+    const filename = result.filePath.split(/[\\/]/).pop() ?? tab.filename;
+
+    useAppContext.setState((state) => ({
+        tabs: state.tabs.map((t) =>
+            t.id === tab.id
+                ? { ...t, filePath: result.filePath, filename, isDirty: false }
+                : t
+        )
+    }))
+
+
 }

@@ -8,7 +8,7 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import { addTab, openFileTab } from "../context/useAppContext";
+import { addTab, openFileTab, saveActiveTab, saveActiveTabAs } from "../context/useAppContext";
 
 // import { useTabs } from "../context/TabsContext";
 
@@ -24,8 +24,11 @@ const MenuBar = () => {
                     </MenubarItem>
                     <MenubarItem onClick={() => openFileTab()}>Open File</MenubarItem>
                     <MenubarSeparator />
-                    <MenubarItem>
+                    <MenubarItem onClick={() => saveActiveTab()}>
                         Save <MenubarShortcut>⌘S</MenubarShortcut>
+                    </MenubarItem>
+                    <MenubarItem onClick={() => saveActiveTabAs()}>
+                        Save AS<MenubarShortcut>⌘S</MenubarShortcut>
                     </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>

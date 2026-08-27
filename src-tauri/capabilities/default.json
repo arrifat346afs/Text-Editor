@@ -8,6 +8,7 @@
     "opener:default",
     "dialog:default",
     "core:window:default",
+    "dialog:allow-save",
     "core:window:allow-start-dragging",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
