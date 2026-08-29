@@ -27,7 +27,7 @@ const NaviGation = () => {
         };
     }, [appwindow]);
     return (
-        <div className="flex justify-between  p-1 border-b border-border w-full">
+        <div className="flex justify-between p-1 border-b border-border w-full">
 
             <div>
                 <MenuBar />

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { updateActiveContent, useAppContext } from "./context/useAppContext";
 import { useShallow } from "zustand/shallow";
+import FileTab from "./navigation/FileTabs";
 
 
 
@@ -15,7 +16,7 @@ const TextArea = () => {
       tabs: state.tabs,
     }))
   );
-  
+
   const content = activeTabId ? (tabs.find((t) => t.id === activeTabId)?.content ?? "") : "";
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -42,14 +43,14 @@ const TextArea = () => {
           "&": {
             height: "100%",
             color: "var(--foreground)",
-            backgroundColor: "var(--background)",
+            backgroundColor: "var(--muted)",
           },
           ".cm-content": {
-            caretColor: "var(--foreground)",
+            caretColor: "var(--accent-foreground)",
           },
           ".cm-gutters": {
-            backgroundColor: "var(--background)",
-            color: "var(--muted-foreground, var(--foreground))",
+            backgroundColor: "var(--muted)",
+            color: "var(--muted-foreground)",
             border: "none",
           },
           ".cm-activeLine": {
@@ -78,6 +79,7 @@ const TextArea = () => {
 
   return (
     <div className="flex h-full flex-col justify-between overflow-hidden">
+      <FileTab />
       <div
         ref={editorContainerRef}
         className="min-h-0 flex-1 w-full overflow-auto outline-none"

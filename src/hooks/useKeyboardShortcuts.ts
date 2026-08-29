@@ -1,12 +1,20 @@
 import {
     addTab,
+    closeTab,
     openFileTab,
     saveActiveTab,
     saveActiveTabAs,
+    useAppContext,
 } from "@/app/context/useAppContext";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 export function useKeyboardShortcuts() {
+    const { activeTabId } = useAppContext(
+        useShallow((state) => ({
+            activeTabId: state.activeTabId,
+        })),
+    );
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             const isCtrlOrCmd = event.ctrlKey || event.metaKey;
@@ -30,10 +38,14 @@ export function useKeyboardShortcuts() {
                     event.preventDefault();
                     openFileTab();
                     break;
+                case "w":
+                    event.preventDefault();
+                    closeTab(activeTabId);
+                    break;
             }
         };
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
+    }, [activeTabId]);
 }

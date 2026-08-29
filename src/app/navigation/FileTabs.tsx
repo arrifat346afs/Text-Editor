@@ -10,7 +10,7 @@ const FileTab = () => {
   );
 
   return (
-    <div className="flex shrink-0 items-center overflow-x-auto  border-b border-neutral-800">
+    <div className="flex shrink-0 items-center overflow-x-auto">
       {tabs.map((tab) => (
         <div
           key={tab.id}
