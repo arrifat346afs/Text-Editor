@@ -1,7 +1,7 @@
 import "./App.css";
 import NaviGation from "./app/navigation/NaviGation";
 import TextArea from "./app/TextArea";
-import { useAppContext } from "./app/context/useAppContext";
+import { useAppContext } from "./app/store/useAppContext";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 
 function App() {

@@ -8,7 +8,7 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import { addTab, openFileTab, saveActiveTab, saveActiveTabAs } from "../context/useAppContext";
+import { addTab, openFileTab, saveActiveTab, saveActiveTabAs } from "../store/useAppContext";
 
 // import { useTabs } from "../context/TabsContext";
 

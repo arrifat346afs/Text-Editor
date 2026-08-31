@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/shallow";
-import { addTab, closeTab, setActiveTabId, useAppContext } from "../context/useAppContext";
+import { addTab, closeTab, setActiveTabId, useAppContext } from "../store/useAppContext";
 
 const FileTab = () => {
   const { tabs, activeTabId} = useAppContext(
