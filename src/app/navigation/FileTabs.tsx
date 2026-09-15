@@ -1,5 +1,6 @@
 import { useShallow } from "zustand/shallow";
 import { addTab, closeTab, setActiveTabId, useAppContext } from "../store/useAppContext";
+import { AiOutlineClose } from "react-icons/ai";
 
 const FileTab = () => {
   const { tabs, activeTabId} = useAppContext(
@@ -15,10 +16,10 @@ const FileTab = () => {
         <div
           key={tab.id}
           onClick={() => setActiveTabId(tab.id)}
-          className={`group flex items-center gap-2 px-3 py-1.5 border-r border-neutral-800 cursor-pointer text-sm select-none ${
+          className={`group flex items-center gap-2 px-3 py-1.5 rounded-[4px] cursor-pointer text-xl select-none ${
             tab.id === activeTabId
-              ? "bg-muted text-white"
-              : "text-neutral-400 hover:bg-accent/40 hover:text-white transition-colors"
+              ? "bg-foreground/10 text-white"
+              : "text-neutral-400 hover:bg-muted hover:text-white transition-colors"
           }`}
         >
           <span>{tab.filename}</span>
@@ -28,9 +29,9 @@ const FileTab = () => {
               e.stopPropagation();
               closeTab(tab.id);
             }}
-            className="ml-1 text-neutral-500 opacity-0 group-hover:opacity-100 hover:text-white transition-opacity"
+            className="ml-1 text-xl text-neutral-500 opacity-0 group-hover:opacity-100 p-0 hover:text-white transition-opacity"
           >
-            ×
+            <AiOutlineClose />
           </button>
         </div>
       ))}

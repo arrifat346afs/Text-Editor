@@ -33,6 +33,8 @@ const FindReplace = () => {
 
     const handleClose = () => {
         if (view) closeSearchPanel(view);
+        // Return focus to the editor so the blinking cursor reappears.
+        requestAnimationFrame(() => view?.focus());
     };
 
     return (

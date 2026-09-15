@@ -1,5 +1,5 @@
 import { EditorState } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import { EditorView, keymap, lineNumbers, drawSelection } from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { updateActiveContent, useAppContext } from "./store/useAppContext";
@@ -37,6 +37,10 @@ const TextArea = () => {
       extensions: [
         lineNumbers(),
         history(),
+        // draws EVERY selection range ourselves — the browser's native
+        // selection can only ever show ONE range, which is why "select all
+        // matches" appeared to only highlight the first match.
+        drawSelection(),
         // is the actual visible UI the user interacts with.
         search({
           createPanel: () => {
@@ -60,14 +64,19 @@ const TextArea = () => {
           "&": {
             height: "100%",
             color: "var(--foreground)",
-            backgroundColor: "var(--muted)",
+            backgroundColor: "var(--background)",
           },
           ".cm-content": {
-            caretColor: "var(--accent-foreground)",
+            caretColor: "var(--foreground)",
+          },
+          ".cm-cursor, .cm-dropCursor": {
+            borderLeftColor: "var(--foreground)",
+            borderLeftWidth: "2px",
+            marginLeft: "-1px",
           },
           ".cm-gutters": {
-            backgroundColor: "var(--muted)",
-            color: "var(--muted-foreground)",
+            backgroundColor: "var(--background)",
+            color: "var(--foreground)",
             border: "none",
           },
           ".cm-activeLine": {
@@ -93,13 +102,21 @@ const TextArea = () => {
             backgroundColor: "var(--accent)",
             color: "var(--accent-foreground)",
           },
+          ".cm-selectionBackground": {
+            // drawn by drawSelection() for every selected range (all find matches)
+            backgroundColor: "rgba(255, 193, 7, 0.30)",
+          },
+          ".cm-focused .cm-selectionBackground": {
+            backgroundColor: "rgba(255, 193, 7, 0.45)",
+          },
           ".cm-searchMatch": {
-            // highlight color for every match found (not the current one)
-            backgroundColor: "var(--accent, rgba(255,255,0,0.3))",
+            // highlight color for every match found (not the current one) —
+            // translucent yellow so it stays visible on dark AND light themes
+            backgroundColor: "rgba(255, 213, 0, 0.30)",
           },
           ".cm-searchMatch-selected": {
             // highlight color for the CURRENT match you're on
-            backgroundColor: "var(--primary, rgba(255,165,0,0.5))",
+            backgroundColor: "rgba(255, 160, 0, 0.55)",
           },
         }),
       ],
@@ -111,10 +128,15 @@ const TextArea = () => {
     });
     viewRef.current = view;
     setSearchView(view);
+    view.focus();
 
     return () => { view.destroy(), setSearchView(null) }; // cleanup on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const focusEditor = () => {
+    viewRef.current?.focus();
+  };
 
   return (
     <div className="flex h-full flex-col justify-between overflow-hidden">
@@ -123,6 +145,7 @@ const TextArea = () => {
       <div
         ref={editorContainerRef}
         className="min-h-0 flex-1 w-full overflow-auto outline-none"
+        onClick={focusEditor}
       />
       <span className="shrink-0 p-1 pl-2 bg-accent/35">{content.length}</span>
     </div>

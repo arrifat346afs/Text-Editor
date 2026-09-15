@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { EditorView } from "@codemirror/view";
-import { SearchQuery, setSearchQuery, findNext, findPrevious, replaceNext, replaceAll } from "@codemirror/search";
+import { SearchQuery, setSearchQuery, findNext, findPrevious, replaceNext, replaceAll, selectMatches } from "@codemirror/search";
 
 interface SearchState {
     isOpen: boolean;
@@ -32,6 +32,19 @@ export function closeSearch() {
     useSearchStore.setState({ isOpen: false });
 }
 
+// Selects ALL matches at once (VS Code style) so that typing in the find
+// input highlights/selected every occurrence immediately — no Enter needed.
+function selectAllMatches() {
+    const { view, searchTerm } = useSearchStore.getState();
+    if (!view || !searchTerm) return;
+    if (selectMatches(view)) {
+        // scroll to the first match so the results are visible
+        view.dispatch({
+            effects: EditorView.scrollIntoView(view.state.selection.main, { y: "center" }),
+        });
+    }
+}
+
 // Pushes current search options into CodeMirror — this is what makes matches highlight
 function pushQuery() {
     const { view, searchTerm, replaceTerm, caseSensitive, useRegex } = useSearchStore.getState();
@@ -43,6 +56,7 @@ function pushQuery() {
 export function setSearchTerm(value: string) {
     useSearchStore.setState({ searchTerm: value });
     pushQuery();
+    selectAllMatches();
 }
 export function setReplaceTerm(value: string) {
     useSearchStore.setState({ replaceTerm: value });
@@ -51,10 +65,12 @@ export function setReplaceTerm(value: string) {
 export function toggleCaseSensitive() {
     useSearchStore.setState((s) => ({ caseSensitive: !s.caseSensitive }));
     pushQuery();
+    selectAllMatches();
 }
 export function toggleRegex() {
     useSearchStore.setState((s) => ({ useRegex: !s.useRegex }));
     pushQuery();
+    selectAllMatches();
 }
 
 export function goToNext() {
