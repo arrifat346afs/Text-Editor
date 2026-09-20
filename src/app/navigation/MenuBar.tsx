@@ -11,8 +11,10 @@ import {
 import { addTab, openFileTab, saveActiveTab, saveActiveTabAs } from "../store/useAppContext";
 
 // import { useTabs } from "../context/TabsContext";
-
-const MenuBar = () => {
+interface MenuBarProps {
+    onOpenSettings: () => void;
+}
+const MenuBar = ({ onOpenSettings }: MenuBarProps) => {
 
     return (
         <Menubar className="w-72 border-0">
@@ -36,7 +38,7 @@ const MenuBar = () => {
                 <MenubarTrigger>More</MenubarTrigger>
                 <MenubarContent>
                     <MenubarGroup>
-                        <MenubarItem>Settings</MenubarItem>
+                        <MenubarItem onClick={onOpenSettings}>Settings</MenubarItem>
                         <MenubarItem>Help</MenubarItem>
                         <MenubarSeparator />
                         <MenubarItem variant="destructive">Delete</MenubarItem>

@@ -3,11 +3,14 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useEffect, useState } from "react";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscChromeRestore } from "react-icons/vsc";
 import MenuBar from "./MenuBar";
+import Settings from "../_components/Settings";
+import { ThemeToggle } from "@/components/mode-toggle";
 
 
 const NaviGation = () => {
     const appwindow = getCurrentWindow();
     const [isMaximized, setIsMaximized] = useState(false);
+    const [settingsOpen, setSettingsOpen] = useState(false);
 
     useEffect(() => {
         // Check initial maximized state
@@ -29,10 +32,12 @@ const NaviGation = () => {
     return (
         <div className="flex justify-between p-1 border-b border-border w-full bg-background">
 
-            <div>
-                <MenuBar />
+            <div className="flex gap-0">
+                <MenuBar  onOpenSettings={() => setSettingsOpen(true)} />
+                <Settings open={settingsOpen} onOpenChange={setSettingsOpen} />
             </div>
             <div>
+                <ThemeToggle/>
                 <Button variant={"ghost"} onClick={() => appwindow.minimize()}><VscChromeMinimize /></Button>
                 <Button variant={"ghost"} onClick={() => appwindow.maximize()}>{isMaximized ? <VscChromeRestore /> : <VscChromeMaximize />}</Button>
                 <Button variant={"ghost"} onClick={() => appwindow.close()}><VscChromeClose /></Button></div>
