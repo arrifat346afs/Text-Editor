@@ -2,13 +2,14 @@ import { useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+
     DialogHeader,
-    DialogTitle
+
 } from "@/components/ui/dialog"
 import { ThemePicker } from "@/components/theme-picker";
 import { cn } from "@/lib/utils";
 import { Palette } from "lucide-react";
+
 
 interface SettingsProps {
     open: boolean;
@@ -28,7 +29,7 @@ type SectionId = (typeof sections)[number]["id"];
 
 const Settings = ({ open, onOpenChange }: SettingsProps) => {
     const [activeSection, setActiveSection] = useState<SectionId>("appearance");
-    const active = sections.find((s) => s.id === activeSection) ?? sections[0];
+    // const active = sections.find((s) => s.id === activeSection) ?? sections[0];
 
     return (
         <div>
@@ -57,8 +58,6 @@ const Settings = ({ open, onOpenChange }: SettingsProps) => {
                     {/* Panel */}
                     <div className="flex min-w-0 flex-1 flex-col">
                         <DialogHeader className="px-6 pt-5">
-                            <DialogTitle>{active.label}</DialogTitle>
-                            <DialogDescription>{active.description}</DialogDescription>
                         </DialogHeader>
                         <div className="flex-1 overflow-y-auto px-6 pb-6">
                             {activeSection === "appearance" && <ThemePicker />}

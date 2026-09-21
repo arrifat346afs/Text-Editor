@@ -1,5 +1,12 @@
 import { EditorState } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers, drawSelection } from "@codemirror/view";
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  keymap,
+  lineNumbers,
+} from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { updateActiveContent, useAppContext } from "./store/useAppContext";
@@ -41,6 +48,8 @@ const TextArea = () => {
         // selection can only ever show ONE range, which is why "select all
         // matches" appeared to only highlight the first match.
         drawSelection(),
+        highlightActiveLine(),
+        highlightActiveLineGutter(),
         // is the actual visible UI the user interacts with.
         search({
           createPanel: () => {
