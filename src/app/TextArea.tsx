@@ -1,4 +1,4 @@
-import { EditorState } from "@codemirror/state";
+import { Compartment, EditorState } from "@codemirror/state";
 import {
   EditorView,
   drawSelection,
@@ -14,6 +14,7 @@ import { useShallow } from "zustand/shallow";
 import FileTab from "./navigation/FileTabs";
 import { search, searchKeymap } from "@codemirror/search";
 import { closeSearch, openSearch, setSearchView } from "./store/useSearchStore";
+import { useEditorSettingsStore } from "./store/useEditorSettingsStore";
 import FindReplace from "./_components/FindReplace";
 
 
@@ -31,6 +32,13 @@ const TextArea = () => {
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
+  const lineNumbersCompartment = useRef(new Compartment());
+  const activeLineCompartment = useRef(new Compartment());
+
+  const showLineNumbers = useEditorSettingsStore((s) => s.showLineNumbers);
+  const highlightActiveLineEnabled = useEditorSettingsStore(
+    (s) => s.highlightActiveLine
+  );
 
   const onChangeRef = useRef(updateActiveContent);
   onChangeRef.current = updateActiveContent;
@@ -39,17 +47,24 @@ const TextArea = () => {
 
   useEffect(() => {
     if (!editorContainerRef.current) return;
+    const { showLineNumbers: initialShowLineNumbers, highlightActiveLine: initialHighlightActiveLine } =
+      useEditorSettingsStore.getState();
     const state = EditorState.create({
       doc: content,
       extensions: [
-        lineNumbers(),
+        lineNumbersCompartment.current.of(
+          initialShowLineNumbers ? lineNumbers() : []
+        ),
         history(),
         // draws EVERY selection range ourselves — the browser's native
         // selection can only ever show ONE range, which is why "select all
         // matches" appeared to only highlight the first match.
         drawSelection(),
-        highlightActiveLine(),
-        highlightActiveLineGutter(),
+        activeLineCompartment.current.of(
+          initialHighlightActiveLine
+            ? [highlightActiveLine(), highlightActiveLineGutter()]
+            : []
+        ),
         // is the actual visible UI the user interacts with.
         search({
           createPanel: () => {
@@ -142,6 +157,25 @@ const TextArea = () => {
     return () => { view.destroy(), setSearchView(null) }; // cleanup on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reconfigure display extensions live when settings change,
+  // without destroying editor content, undo history, or focus.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({
+      effects: [
+        lineNumbersCompartment.current.reconfigure(
+          showLineNumbers ? lineNumbers() : []
+        ),
+        activeLineCompartment.current.reconfigure(
+          highlightActiveLineEnabled
+            ? [highlightActiveLine(), highlightActiveLineGutter()]
+            : []
+        ),
+      ],
+    });
+  }, [showLineNumbers, highlightActiveLineEnabled]);
 
   const focusEditor = () => {
     viewRef.current?.focus();

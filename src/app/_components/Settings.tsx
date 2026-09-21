@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dialog"
 import { ThemePicker } from "@/components/theme-picker";
 import { cn } from "@/lib/utils";
-import { Palette } from "lucide-react";
+import { Code, Palette } from "lucide-react";
+import { EditorSettings } from "./EditorSettings";
 
 
 interface SettingsProps {
@@ -22,6 +23,12 @@ const sections = [
         label: "Appearance",
         icon: Palette,
         description: "Color theme and display mode.",
+    },
+    {
+        id: "editor",
+        label: "Editor",
+        icon: Code,
+        description: "Line numbers and active line highlight.",
     },
 ] as const;
 
@@ -61,6 +68,7 @@ const Settings = ({ open, onOpenChange }: SettingsProps) => {
                         </DialogHeader>
                         <div className="flex-1 overflow-y-auto px-6 pb-6">
                             {activeSection === "appearance" && <ThemePicker />}
+                            {activeSection === "editor" && <EditorSettings />}
                         </div>
                     </div>
                 </DialogContent>
