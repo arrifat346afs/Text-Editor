@@ -190,6 +190,19 @@ body {
     --shadow-offset-x: 0px;
     --shadow-offset-y: 2px;
     --letter-spacing: 0em;
+    /* Syntax highlighting token colors (light defaults).
+       Every theme inherits these — override per [data-theme] for a custom
+       code palette. The editor's HighlightStyle reads them via var(). */
+    --syntax-keyword: #cf222e;
+    --syntax-string: #0a3069;
+    --syntax-comment: #59636e;
+    --syntax-number: #0550ae;
+    --syntax-function: #8250df;
+    --syntax-variable: #953800;
+    --syntax-type: #116329;
+    --syntax-operator: #cf222e;
+    --syntax-tag: #116329;
+    --syntax-invalid: #cf222e;
 }
 
 .dark {
@@ -257,6 +270,17 @@ body {
     --shadow-offset-y: 2px;
     --letter-spacing: 0em;
     --spacing: 0.25rem;
+    /* Syntax highlighting token colors (dark defaults). */
+    --syntax-keyword: #ff7b72;
+    --syntax-string: #a5d6ff;
+    --syntax-comment: #8b949e;
+    --syntax-number: #79c0ff;
+    --syntax-function: #d2a8ff;
+    --syntax-variable: #ffa657;
+    --syntax-type: #7ee787;
+    --syntax-operator: #ff7b72;
+    --syntax-tag: #7ee787;
+    --syntax-invalid: #f85149;
 }
 
 /* Theme: Default */

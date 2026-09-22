@@ -15,6 +15,7 @@ import FileTab from "./navigation/FileTabs";
 import { search, searchKeymap } from "@codemirror/search";
 import { closeSearch, openSearch, setSearchView } from "./store/useSearchStore";
 import { useEditorSettingsStore } from "./store/useEditorSettingsStore";
+import { getLanguageConfig } from "./utils/language";
 import FindReplace from "./_components/FindReplace";
 
 
@@ -29,15 +30,20 @@ const TextArea = () => {
   );
 
   const content = activeTabId ? (tabs.find((t) => t.id === activeTabId)?.content ?? "") : "";
+  const activeFilename = activeTabId ? (tabs.find((t) => t.id === activeTabId)?.filename ?? "") : "";
 
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const lineNumbersCompartment = useRef(new Compartment());
   const activeLineCompartment = useRef(new Compartment());
+  const languageCompartment = useRef(new Compartment());
 
   const showLineNumbers = useEditorSettingsStore((s) => s.showLineNumbers);
   const highlightActiveLineEnabled = useEditorSettingsStore(
     (s) => s.highlightActiveLine
+  );
+  const syntaxHighlightingEnabled = useEditorSettingsStore(
+    (s) => s.syntaxHighlighting
   );
 
   const onChangeRef = useRef(updateActiveContent);
@@ -47,8 +53,12 @@ const TextArea = () => {
 
   useEffect(() => {
     if (!editorContainerRef.current) return;
-    const { showLineNumbers: initialShowLineNumbers, highlightActiveLine: initialHighlightActiveLine } =
+    const { showLineNumbers: initialShowLineNumbers, highlightActiveLine: initialHighlightActiveLine, syntaxHighlighting: initialSyntaxHighlighting } =
       useEditorSettingsStore.getState();
+    const { tabs: initialTabs, activeTabId: initialActiveTabId } =
+      useAppContext.getState();
+    const initialFilename =
+      initialTabs.find((t) => t.id === initialActiveTabId)?.filename ?? "";
     const state = EditorState.create({
       doc: content,
       extensions: [
@@ -64,6 +74,9 @@ const TextArea = () => {
           initialHighlightActiveLine
             ? [highlightActiveLine(), highlightActiveLineGutter()]
             : []
+        ),
+        languageCompartment.current.of(
+          getLanguageConfig(initialFilename, initialSyntaxHighlighting)
         ),
         // is the actual visible UI the user interacts with.
         search({
@@ -176,6 +189,18 @@ const TextArea = () => {
       ],
     });
   }, [showLineNumbers, highlightActiveLineEnabled]);
+
+  // Reconfigure the language live when the toggle changes or the active
+  // file changes, without destroying editor content, undo history, or focus.
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    view.dispatch({
+      effects: languageCompartment.current.reconfigure(
+        getLanguageConfig(activeFilename, syntaxHighlightingEnabled)
+      ),
+    });
+  }, [syntaxHighlightingEnabled, activeFilename]);
 
   const focusEditor = () => {
     viewRef.current?.focus();
